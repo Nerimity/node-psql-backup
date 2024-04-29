@@ -12,11 +12,9 @@ async function runAll() {
   console.log("Done!")
 }
 
-// run every 1 minute
-cron.schedule('* * * * *', () => {
-  runAll();
-});
-
+console.log("Cron job running...")
+// run every day at 00:00
+cron.schedule('0 0 * * *', runAll);
 
 
 async function runDump() {
