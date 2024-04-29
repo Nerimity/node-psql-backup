@@ -9,9 +9,13 @@ const password = process.env.PASSWORD;
 async function runAll() {
   console.log("Dumping...")
   const id = await runDump();
-  console.log("Uploading...")
+  
+  console.log("Compressing...")
   await compress(id);
+
+  console.log("Uploading...")
   await uploadDump(`encrypted_${id}`);
+  
   console.log("Removing local dump...")
   await removeDump(id);
   await removeDump(`encrypted_${id}`);
