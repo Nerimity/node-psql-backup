@@ -1,5 +1,5 @@
 import process from 'child_process';
-
+import cron from 'node-cron';
 
 
 async function runAll() {
@@ -12,7 +12,10 @@ async function runAll() {
   console.log("Done!")
 }
 
-runAll()
+// run every 1 minute
+cron.schedule('* * * * *', () => {
+  runAll();
+});
 
 
 
