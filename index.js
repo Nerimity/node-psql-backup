@@ -3,8 +3,11 @@ import process from 'child_process';
 
 
 async function runAll() {
+  console.log("Dumping...")
   const id = await runDump();
+  console.log("Uploading...")
   await uploadDump(id);
+  console.log("Done!")
 
 }
 
