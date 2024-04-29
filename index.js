@@ -14,11 +14,11 @@ async function runAll() {
   await compress(id);
 
   console.log("Uploading...")
-  await uploadDump(`encrypted_${id}`);
-  
+  await uploadDump(`encrypted_${id}.zip`);
+
   console.log("Removing local dump...")
-  await removeDump(id);
-  await removeDump(`encrypted_${id}`);
+  await removeDump(`${id}.dump`);
+  await removeDump(`encrypted_${id}.zip`);
   console.log("Done!")
 }
 
@@ -42,7 +42,7 @@ async function runDump() {
 
 async function uploadDump(id) {
   return new Promise((resolve, reject) => {
-    exec(`rclone copy ${id}.dump gdrive:db_backups`, (err, stdout, stderr) => {
+    exec(`rclone copy ${id} gdrive:db_backups`, (err, stdout, stderr) => {
       if (err) {
         reject(err);
       } else {
