@@ -1,3 +1,4 @@
+import {spawn, exec} from 'process'
 import cron from 'node-cron';
 import dotenv from 'dotenv';
 
@@ -25,7 +26,7 @@ cron.schedule('0 0 * * *', runAll);
 async function runDump() {
   return new Promise((resolve, reject) => {
     const id = Math.floor(Math.random() * 10000000);
-    process.exec(`pg_dump -Fc -U postgres postgres -f ${id}.dump`, (err, stdout, stderr) => {
+    exec(`pg_dump -Fc -U postgres postgres -f ${id}.dump`, (err, stdout, stderr) => {
       if (err) {
         reject(err);
       } else {
@@ -37,7 +38,7 @@ async function runDump() {
 
 async function uploadDump(id) {
   return new Promise((resolve, reject) => {
-    process.exec(`rclone copy ${id}.dump gdrive:db_backups`, (err, stdout, stderr) => {
+    exec(`rclone copy ${id}.dump gdrive:db_backups`, (err, stdout, stderr) => {
       if (err) {
         reject(err);
       } else {
@@ -48,7 +49,7 @@ async function uploadDump(id) {
 }
 async function removeDump(id) {
   return new Promise((resolve, reject) => {
-    process.exec(`rm ${id}.dump`, (err, stdout, stderr) => {
+    exec(`rm ${id}.dump`, (err, stdout, stderr) => {
       if (err) {
         reject(err);
       } else {
@@ -61,7 +62,7 @@ async function removeDump(id) {
 
 async function compress(id) {
   return new Promise((resolve, reject) => {
-    const zip = process.spawn('zip',['-P', password , `encrypted_${id}.zip`, `${id}.dump`]);
+    const zip = spawn('zip',['-P', password , `encrypted_${id}.zip`, `${id}.dump`]);
     zip .on('exit', function(code) {
       if (code === 0) {
         resolve(true);
