@@ -1,4 +1,4 @@
-import {spawn, exec} from 'process'
+import {spawn, exec} from 'child_process'
 import cron from 'node-cron';
 import dotenv from 'dotenv';
 
