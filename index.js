@@ -27,7 +27,7 @@ async function runDump() {
 
 async function uploadDump(id) {
   return new Promise((resolve, reject) => {
-    process.exec(`rclone copy ${id}.dump gdrive:db_backups`, (err, stdout, stderr) => {
+    process.exec(`rclone copy /var/lib/postgresql/${id}.dump gdrive:db_backups`, (err, stdout, stderr) => {
       if (err) {
         reject(err);
       } else {
