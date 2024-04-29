@@ -1,14 +1,19 @@
-import process from 'child_process';
 import cron from 'node-cron';
+import dotenv from 'dotenv';
 
+dotenv.config();
+
+const password = process.env.PASSWORD;
 
 async function runAll() {
   console.log("Dumping...")
   const id = await runDump();
   console.log("Uploading...")
-  await uploadDump(id);
+  await compress(id);
+  await uploadDump(`encrypted_${id}`);
   console.log("Removing local dump...")
   await removeDump(id);
+  await removeDump(`encrypted_${id}`);
   console.log("Done!")
 }
 
@@ -51,4 +56,18 @@ async function removeDump(id) {
       }
     });
   });
+}
+
+
+async function compress(id) {
+  return new Promise((resolve, reject) => {
+    const zip = process.spawn('zip',['-P', password , `encrypted_${id}.zip`, `${id}.dump`]);
+    zip .on('exit', function(code) {
+      if (code === 0) {
+        resolve(true);
+      } else {
+        reject(code);
+      }
+    });
+  })
 }
