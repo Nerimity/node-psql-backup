@@ -7,8 +7,9 @@ async function runAll() {
   const id = await runDump();
   console.log("Uploading...")
   await uploadDump(id);
+  console.log("Removing local dump...")
+  await removeDump(id);
   console.log("Done!")
-
 }
 
 runAll()
@@ -30,7 +31,18 @@ async function runDump() {
 
 async function uploadDump(id) {
   return new Promise((resolve, reject) => {
-    process.exec(`rclone copy /var/lib/postgresql/${id}.dump gdrive:db_backups`, (err, stdout, stderr) => {
+    process.exec(`rclone copy ${id}.dump gdrive:db_backups`, (err, stdout, stderr) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(true);
+      }
+    });
+  });
+}
+async function removeDump(id) {
+  return new Promise((resolve, reject) => {
+    process.exec(`rm ${id}.dump`, (err, stdout, stderr) => {
       if (err) {
         reject(err);
       } else {
