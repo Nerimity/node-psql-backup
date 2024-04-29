@@ -53,7 +53,7 @@ async function uploadDump(id) {
 }
 async function removeDump(id) {
   return new Promise((resolve, reject) => {
-    exec(`rm ${id}.dump`, (err, stdout, stderr) => {
+    exec(`rm ${id}`, (err, stdout, stderr) => {
       if (err) {
         reject(err);
       } else {
