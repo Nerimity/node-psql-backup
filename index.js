@@ -11,11 +11,11 @@ async function runAll() {
   const postgres_db_id = await runDump("postgres");
   const cdn_db_id = await runDump("nerimity-cdn");
   
+  const encryptedZipId = Math.floor(Math.random() * 10000000);
   console.log("Compressing...")
-  await compress([postgres_db_id, cdn_db_id]);
+  await compress(encryptedZipId, [postgres_db_id, cdn_db_id]);
 
   console.log("Uploading...")
-  const encryptedZipId = Math.floor(Math.random() * 10000000);
   await uploadDump(`encrypted_${encryptedZipId}.zip`);
 
   console.log("Removing local dump...")
@@ -71,9 +71,9 @@ async function removeDump(id) {
 }
 
 
-async function compress(ids) {
+async function compress(zipId, ids) {
   return new Promise((resolve, reject) => {
-    const zip = spawn('zip',['-P', password , `encrypted_${id}.zip`, ...ids.map(id => `${id}.dump`)]);
+    const zip = spawn('zip',['-P', password , `encrypted_${zipId}.zip`, ...ids.map(id => `${id}.dump`)]);
     zip .on('exit', function(code) {
       if (code === 0) {
         resolve(true);
