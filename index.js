@@ -19,7 +19,7 @@ async function runAll() {
   await uploadDump(`encrypted_${encryptedZipId}.zip`);
 
   console.log("Removing local dump...")
-  await removeDump(`${postgres_db_id}.dump`);s
+  await removeDump(`${postgres_db_id}.dump`);
   await removeDump(`${cdn_db_id}.dump`);
   await removeDump(`encrypted_${encryptedZipId}.zip`);
   console.log("Done!")
