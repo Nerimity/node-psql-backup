@@ -15,12 +15,13 @@ async function runAll() {
   await compress([postgres_db_id, cdn_db_id]);
 
   console.log("Uploading...")
-  await uploadDump(`encrypted_${id}.zip`);
+  const encryptedZipId = Math.floor(Math.random() * 10000000);
+  await uploadDump(`encrypted_${encryptedZipId}.zip`);
 
   console.log("Removing local dump...")
-  await removeDump(`${postgres_db_id}.dump`);
+  await removeDump(`${postgres_db_id}.dump`);s
   await removeDump(`${cdn_db_id}.dump`);
-  await removeDump(`encrypted_${id}.zip`);
+  await removeDump(`encrypted_${encryptedZipId}.zip`);
   console.log("Done!")
 }
 
