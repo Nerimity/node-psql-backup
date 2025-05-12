@@ -8,16 +8,18 @@ const password = process.env.PASSWORD;
 
 async function runAll() {
   console.log("Dumping...")
-  const id = await runDump();
+  const postgres_db_id = await runDump("postgres");
+  const cdn_db_id = await runDump("nerimity-cdn");
   
   console.log("Compressing...")
-  await compress(id);
+  await compress([postgres_db_id, cdn_db_id]);
 
   console.log("Uploading...")
   await uploadDump(`encrypted_${id}.zip`);
 
   console.log("Removing local dump...")
-  await removeDump(`${id}.dump`);
+  await removeDump(`${postgres_db_id}.dump`);
+  await removeDump(`${cdn_db_id}.dump`);
   await removeDump(`encrypted_${id}.zip`);
   console.log("Done!")
 }
@@ -26,11 +28,15 @@ console.log("Cron job running...")
 // run every day at 00:00
 cron.schedule('0 0 * * *', runAll);
 
+if (process.argv.includes("now")) {
+  runAll();
+}
 
-async function runDump() {
+
+async function runDump(dbName) {
   return new Promise((resolve, reject) => {
-    const id = Math.floor(Math.random() * 10000000);
-    exec(`pg_dump -Fc -U postgres postgres -f ${id}.dump`, (err, stdout, stderr) => {
+    const id = dbName + "_" + Math.floor(Math.random() * 10000000);
+    exec(`pg_dump -Fc -U postgres ${dbName} -f ${id}.dump`, (err, stdout, stderr) => {
       if (err) {
         reject(err);
       } else {
@@ -64,9 +70,9 @@ async function removeDump(id) {
 }
 
 
-async function compress(id) {
+async function compress(ids) {
   return new Promise((resolve, reject) => {
-    const zip = spawn('zip',['-P', password , `encrypted_${id}.zip`, `${id}.dump`]);
+    const zip = spawn('zip',['-P', password , `encrypted_${id}.zip`, ...ids.map(id => `${id}.dump`)]);
     zip .on('exit', function(code) {
       if (code === 0) {
         resolve(true);
